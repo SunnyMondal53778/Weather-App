@@ -1,4 +1,4 @@
-const apiUrl = "/weather"; // Call your server endpoint
+const apiUrl = "/.netlify/functions/weather"; // Call your serverless function endpoint
 const searchBox = document.querySelector(".search input");
 const searchBtn = document.querySelector(".search button");
 const weatherIcon = document.querySelector(".weather-icon");
@@ -16,8 +16,9 @@ async function checkWeather(city) {
 
     try {
         const response = await fetch(`${apiUrl}?city=${city}`);
-        if (response.status === 404) {
-            errorElement.textContent = "Invalid city name";
+        if (!response.ok) {
+            const message = response.status === 404 ? "Invalid city name" : "Error fetching data";
+            errorElement.textContent = message;
             errorElement.style.display = "block";
             weatherElement.style.display = "none";
         } else {
