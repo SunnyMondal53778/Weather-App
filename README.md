@@ -2,7 +2,8 @@
 
 A modern, responsive weather application that provides real-time weather information for any city worldwide. Built with vanilla JavaScript and the OpenWeather API.
 
-![Weather App Screenshot](https://raw.githubusercontent.com/sunnymondal53778/Weather-App/main/images/screenshot.png)
+![Weather App](https://github.com/user-attachments/assets/6061091f-b8ad-49b3-a91a-66bc492f00ff)
+
 
 ## 🌟 Features
 
