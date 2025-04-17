@@ -1,4 +1,5 @@
-const apiKey = "30675336398a36bba363a0d075912b43";
+// Using Base64 encoded API key for basic obfuscation
+const encodedKey = "ZjFiOGI5OTBjNTk3YWI0ZDYzMmY3YmZjZTIxY2U4NWM=";
 const apiUrl = "https://api.openweathermap.org/data/2.5/weather?units=metric&q=";
 
 const searchBox = document.querySelector(".search input");
@@ -17,7 +18,8 @@ async function checkWeather(city) {
     }
 
     try {
-        // Updated to use fetch with proper error handling
+        // Decode API key when making the request
+        const apiKey = atob(encodedKey);
         const response = await fetch(`${apiUrl}${encodeURIComponent(city)}&appid=${apiKey}`);
         const data = await response.json();
 
