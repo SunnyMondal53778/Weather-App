@@ -18,16 +18,29 @@ async function checkWeather(city) {
     }
 
     try {
-        // Decode API key when making the request
         const apiKey = atob(encodedKey);
-        const response = await fetch(`${apiUrl}${encodeURIComponent(city)}&appid=${apiKey}`);
+        const response = await fetch(`${apiUrl}${encodeURIComponent(city)}&appid=${apiKey}`, {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
         const data = await response.json();
 
         if (data.cod === "404") {
-            errorElement.textContent = "Invalid city name";
+            errorElement.textContent = "City not found. Please check the spelling and try again.";
             errorElement.style.display = "block";
             weatherElement.style.display = "none";
             return;
+        }
+
+        if (data.cod !== 200) {
+            throw new Error('Weather data not available');
         }
 
         // Update UI with weather data
@@ -37,34 +50,23 @@ async function checkWeather(city) {
         document.querySelector(".wind").innerHTML = data.wind.speed + " km/h";
 
         // Update weather icon based on weather condition
-        switch (data.weather[0].main) {
-            case "Clouds":
-                weatherIcon.src = "images/clouds.png";
-                break;
-            case "Clear":
-                weatherIcon.src = "images/clear.png";
-                break;
-            case "Rain":
-                weatherIcon.src = "images/rain.png";
-                break;
-            case "Drizzle":
-                weatherIcon.src = "images/drizzle.png";
-                break;
-            case "Mist":
-                weatherIcon.src = "images/mist.png";
-                break;
-            case "Snow":
-                weatherIcon.src = "images/snow.png";
-                break;
-            default:
-                weatherIcon.src = "images/clouds.png";
-        }
+        const weatherMain = data.weather[0].main.toLowerCase();
+        const iconMap = {
+            'clouds': 'clouds.png',
+            'clear': 'clear.png',
+            'rain': 'rain.png',
+            'drizzle': 'drizzle.png',
+            'mist': 'mist.png',
+            'snow': 'snow.png'
+        };
 
+        weatherIcon.src = `images/${iconMap[weatherMain] || 'clouds.png'}`;
+        
         errorElement.style.display = "none";
         weatherElement.style.display = "block";
     } catch (error) {
         console.error("Weather fetch error:", error);
-        errorElement.textContent = "An error occurred while fetching weather data. Please try again.";
+        errorElement.textContent = "Network error. Please check your connection and try again.";
         errorElement.style.display = "block";
         weatherElement.style.display = "none";
     }
@@ -74,7 +76,6 @@ searchBtn.addEventListener("click", () => {
     checkWeather(searchBox.value);
 });
 
-// Add enter key support
 searchBox.addEventListener("keyup", (event) => {
     if (event.key === "Enter") {
         checkWeather(searchBox.value);
